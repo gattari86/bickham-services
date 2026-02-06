@@ -828,6 +828,14 @@
                 display: none;
             }
 
+            /* Title slides: CSS gradient replaces hidden blobs on mobile */
+            .slide--title {
+                background:
+                    radial-gradient(ellipse at 85% 5%, rgba(107, 78, 255, 0.3) 0%, transparent 50%),
+                    radial-gradient(ellipse at 15% 95%, rgba(139, 124, 255, 0.25) 0%, transparent 50%),
+                    var(--bg-dark) !important;
+            }
+
             .big-number {
                 font-size: clamp(32px, 8vw, 48px);
             }
@@ -916,45 +924,57 @@
             }
 
             /* -------------------------------------------------------------------
-               PRICING OPTIONS: Horizontal swipe cards on mobile
+               PRICING OPTIONS: Accordion cards on mobile
                ------------------------------------------------------------------- */
             .pricing-options {
-                display: flex !important;
-                grid-template-columns: unset !important;
-                overflow-x: auto;
-                scroll-snap-type: x mandatory;
-                -webkit-overflow-scrolling: touch;
-                gap: 10px !important;
-                padding-bottom: 6px;
-                margin-left: -16px;
-                margin-right: -16px;
-                padding-left: 16px;
-                padding-right: 16px;
+                grid-template-columns: 1fr !important;
+                gap: var(--space-sm) !important;
             }
 
             .pricing-options > .card {
-                min-width: 72vw;
-                max-width: 72vw;
-                scroll-snap-align: start;
-                flex-shrink: 0;
+                cursor: pointer;
+                -webkit-tap-highlight-color: transparent;
                 margin-bottom: 0 !important;
+                transition: box-shadow 0.2s ease;
+            }
+
+            .pricing-options > .card.open {
+                box-shadow: 0 4px 20px rgba(107, 78, 255, 0.12);
             }
 
             .pricing-options > .card.card--recommended {
-                padding-top: calc(var(--card-padding) + 8px);
+                margin-top: 6px;
             }
 
-            .pricing-options::-webkit-scrollbar {
-                height: 3px;
+            .pricing-options > .card ul {
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.3s ease, margin-top 0.3s ease;
+                margin-top: 0;
             }
 
-            .pricing-options::-webkit-scrollbar-track {
-                background: transparent;
+            .pricing-options > .card.open ul {
+                max-height: 300px;
+                margin-top: var(--space-sm);
             }
 
-            .pricing-options::-webkit-scrollbar-thumb {
-                background: var(--primary-purple-medium);
-                border-radius: 4px;
+            .pricing-options > .card::after {
+                content: 'See what\2019s included \25BE';
+                display: block;
+                text-align: center;
+                font-size: 11px;
+                color: var(--text-muted);
+                margin-top: var(--space-sm);
+                padding-top: var(--space-sm);
+                border-top: 1px solid rgba(0,0,0,0.06);
+            }
+
+            .pricing-options > .card.open::after {
+                content: 'Collapse \25B4';
+            }
+
+            .pricing-options > .card.card--recommended::after {
+                border-top-color: rgba(107, 78, 255, 0.15);
             }
 
             /* -------------------------------------------------------------------
@@ -1072,10 +1092,6 @@
                 padding: var(--space-sm) var(--space-md) !important;
             }
 
-            .pricing-options > .card {
-                min-width: 78vw;
-                max-width: 78vw;
-            }
         }
     </style>
 </head>
@@ -1554,6 +1570,15 @@
                 if (i === 0 && window.matchMedia('(max-width: 768px)').matches) {
                     item.classList.add('open');
                 }
+            });
+
+            // Pricing options accordion on mobile (one open at a time)
+            document.querySelectorAll('.pricing-options > .card').forEach(card => {
+                card.addEventListener('click', () => {
+                    const isOpen = card.classList.contains('open');
+                    document.querySelectorAll('.pricing-options > .card').forEach(c => c.classList.remove('open'));
+                    if (!isOpen) card.classList.add('open');
+                });
             });
         });
     </script>

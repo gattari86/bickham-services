@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="color-scheme" content="light">
     <title>Bickham Services Unlimited x Poppy Marketing | Partnership Proposal</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -79,6 +80,7 @@
         html {
             scroll-behavior: smooth;
             scroll-snap-type: y mandatory;
+            color-scheme: light;
         }
 
         body {
@@ -632,7 +634,8 @@
 
             .slide-content {
                 flex: 1;
-                overflow: auto;
+                overflow-y: auto;
+                overflow-x: hidden;
                 -webkit-overflow-scrolling: touch;
                 display: flex;
                 flex-direction: column;
@@ -911,6 +914,87 @@
                 height: 1px !important;
                 margin: 0 auto;
             }
+
+            /* -------------------------------------------------------------------
+               PRICING OPTIONS: Horizontal swipe cards on mobile
+               ------------------------------------------------------------------- */
+            .pricing-options {
+                display: flex !important;
+                grid-template-columns: unset !important;
+                overflow-x: auto;
+                scroll-snap-type: x mandatory;
+                -webkit-overflow-scrolling: touch;
+                gap: 10px !important;
+                padding-bottom: 6px;
+                margin-left: -16px;
+                margin-right: -16px;
+                padding-left: 16px;
+                padding-right: 16px;
+            }
+
+            .pricing-options > .card {
+                min-width: 72vw;
+                max-width: 72vw;
+                scroll-snap-align: start;
+                flex-shrink: 0;
+                margin-bottom: 0 !important;
+            }
+
+            .pricing-options > .card.card--recommended {
+                padding-top: calc(var(--card-padding) + 8px);
+            }
+
+            .pricing-options::-webkit-scrollbar {
+                height: 3px;
+            }
+
+            .pricing-options::-webkit-scrollbar-track {
+                background: transparent;
+            }
+
+            .pricing-options::-webkit-scrollbar-thumb {
+                background: var(--primary-purple-medium);
+                border-radius: 4px;
+            }
+
+            /* -------------------------------------------------------------------
+               FAQ: Accordion collapse on mobile
+               ------------------------------------------------------------------- */
+            .faq-grid .faq-item {
+                cursor: pointer;
+                -webkit-tap-highlight-color: transparent;
+            }
+
+            .faq-grid .faq-item h4 {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .faq-grid .faq-item h4::after {
+                content: '+';
+                font-size: 18px;
+                font-weight: 400;
+                color: var(--text-muted);
+                flex-shrink: 0;
+                margin-left: 8px;
+            }
+
+            .faq-grid .faq-item.open h4::after {
+                content: '\2212';
+            }
+
+            .faq-grid .faq-item p {
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.3s ease;
+                margin-top: 0;
+            }
+
+            .faq-grid .faq-item.open p {
+                max-height: 200px;
+                margin-top: 4px;
+            }
         }
 
         /* =============================================================================
@@ -987,6 +1071,11 @@
                 font-size: 0.8rem;
                 padding: var(--space-sm) var(--space-md) !important;
             }
+
+            .pricing-options > .card {
+                min-width: 78vw;
+                max-width: 78vw;
+            }
         }
     </style>
 </head>
@@ -1053,7 +1142,7 @@
         <div class="slide-content">
             <p class="eyebrow reveal">Choose Your Path</p>
             <h2 class="reveal">Engagement <span class="accent">Options</span></h2>
-            <div class="three-col reveal">
+            <div class="three-col pricing-options reveal">
                 <!-- Option 1 -->
                 <div class="card" style="border-top: 4px solid var(--accent-violet);">
                     <div style="display: flex; align-items: center; gap: var(--space-sm); margin-bottom: var(--space-md);">
@@ -1260,7 +1349,7 @@
         <div class="slide-content">
             <p class="eyebrow reveal">Common Questions</p>
             <h2 class="reveal">Frequently <span class="accent">Asked</span></h2>
-            <div class="two-col reveal">
+            <div class="two-col faq-grid reveal">
                 <div>
                     <div class="faq-item">
                         <h4>Why Wix?</h4>
@@ -1456,7 +1545,17 @@
             }
         }
 
-        document.addEventListener('DOMContentLoaded', () => new SlidePresentation());
+        document.addEventListener('DOMContentLoaded', () => {
+            new SlidePresentation();
+
+            // FAQ accordion on mobile
+            document.querySelectorAll('.faq-grid .faq-item').forEach((item, i) => {
+                item.addEventListener('click', () => item.classList.toggle('open'));
+                if (i === 0 && window.matchMedia('(max-width: 768px)').matches) {
+                    item.classList.add('open');
+                }
+            });
+        });
     </script>
 </body>
 </html>
